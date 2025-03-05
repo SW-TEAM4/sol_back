@@ -65,6 +65,13 @@ public class AccountService {
         });
     }
 
+    // 파킹 통장 투자 비율 조회
+    @Transactional
+    public Integer getTransferRatio(String accountNumber) {
+        Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
+        return accountOpt.map(AccountEntity::getInvestorRatio).orElse(0);
+    }
+
     // collectInterest() --> 투자 비율을 기준으로 이자 계산 및 계좌 잔액 증가 함수
     @Transactional
     public AccountDTO collectInterest(String accountNumber) {
