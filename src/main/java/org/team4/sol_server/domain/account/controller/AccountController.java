@@ -3,22 +3,35 @@ package org.team4.sol_server.domain.account.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.team4.sol_server.domain.account.dto.AccountDTO;
 import org.team4.sol_server.domain.account.dto.DepositRequestDTO;
 import org.team4.sol_server.domain.account.dto.TransferRequestDTO;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
+import org.team4.sol_server.domain.account.repository.AccountRepository;
 import org.team4.sol_server.domain.account.service.AccountService;
 
 import java.util.Optional;
 
+/*
+파일명 : AccountController.java
+생성자 : JDeok
+날 짜  : 2025.03.05
+시 간  : 오후 02:14
+기 능  : 계좌페이지
+Params :
+Return :
+변경사항
+     - 2025.03.05 : JDeok(최초작성)
+*/
 @RestController
 @RequestMapping("api/account")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class AccountController {
 
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
     // 계좌 조회 페이지
     @GetMapping("/balance")
@@ -34,7 +47,7 @@ public class AccountController {
         return ResponseEntity.ok().body(dto);
     }
 
-//    // 이체 폼 페이지
+//    // 이체 폼 페이지쟈
 //    @GetMapping("/transfer")
 //    public String showTransferForm() {
 //        return "transfer";
@@ -68,6 +81,12 @@ public class AccountController {
         accountService.setTransferRatio(accountNumber, ratio);
         // 백엔드 응답(200)
         return ResponseEntity.ok("파킹 통장 투자 비율 업데이트 완료!!!");
+    }
+
+    // 증권 계좌 이체 비율 조회
+    @GetMapping("/get-ratio")
+    public Integer getTransferRatio(@RequestParam String accountNumber) {
+        return accountService.getTransferRatio(accountNumber);
     }
 
     // 이자 받기 --> Response(유저의 잔액 정보를 리턴)
