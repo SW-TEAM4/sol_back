@@ -3,7 +3,7 @@ package org.team4.sol_server.domain.account.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.math.BigInteger;
 
 @Entity
 @Getter
@@ -12,7 +12,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @Builder
 @Table(name = "account")
-public class AccountEntity {
+public class AccountEntity extends BaseEntity {
 //        @Id
 //        @GeneratedValue(strategy = GenerationType.IDENTITY)
 //        private Long id;
@@ -25,6 +25,7 @@ public class AccountEntity {
 //
 //        @Column(nullable = false)
 //        private double balance;
+
 
 
         // 아직 UserEntity 없음
@@ -41,9 +42,8 @@ public class AccountEntity {
         @Column(name = "user_idx", nullable = false)
         private int userIdx;
 
-        // Q. BIGINT? long? double?
         @Column(name = "balance", nullable = false)
-        private double balance;
+        private Long balance;
 
         @Column(name = "investor_ratio", nullable = false)
         private int investorRatio;  // 이체 비율
@@ -53,12 +53,4 @@ public class AccountEntity {
 
         @Column(name = "interest_ratio", nullable = false)
         private double interestRatio;  // 이자율
-
-        @Temporal(TemporalType.DATE)
-        @Column(name = "created", nullable = false)
-        private Date created;
-
-        @Temporal(TemporalType.DATE)
-        @Column(name = "updated")
-        private Date updated;
 }
