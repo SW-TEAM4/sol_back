@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.math.BigInteger;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,5 +17,5 @@ public class DepositRequestDTO {
     private String accountNumber;
 
     @NotNull
-    private double amount;
+    private Long amount;
 }

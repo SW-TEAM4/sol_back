@@ -8,6 +8,7 @@ import org.team4.sol_server.domain.account.dto.AccountDTO;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
 
+import java.math.BigInteger;
 import java.util.Optional;
 
 @Service
@@ -21,7 +22,7 @@ public class AccountService {
     }
 
     @Transactional
-    public boolean transfer(String fromAccountNumber, String toAccountNumber, double amount) {
+    public boolean transfer(String fromAccountNumber, String toAccountNumber, Long amount) {
         Optional<AccountEntity> fromAccountOpt = accountRepository.findByAccountNumber(fromAccountNumber); // 출금 계좌
         Optional<AccountEntity> toAccountOpt = accountRepository.findByAccountNumber(toAccountNumber); // 입금 계좌
 
@@ -41,7 +42,7 @@ public class AccountService {
     }
 
     @Transactional
-    public boolean deposit(String accountNumber, double amount) {
+    public boolean deposit(String accountNumber, Long amount) {
         Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
 
         if (accountOpt.isPresent() && amount > 0) {
