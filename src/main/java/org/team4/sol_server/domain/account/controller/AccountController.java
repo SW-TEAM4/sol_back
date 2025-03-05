@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.team4.sol_server.domain.account.dto.AccountDTO;
 import org.team4.sol_server.domain.account.dto.DepositRequestDTO;
+import org.team4.sol_server.domain.account.dto.TransferRatioDTO;
 import org.team4.sol_server.domain.account.dto.TransferRequestDTO;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
@@ -31,7 +32,6 @@ Return :
 public class AccountController {
 
     private final AccountService accountService;
-    private final AccountRepository accountRepository;
 
     // 계좌 조회 페이지
     @GetMapping("/balance")
@@ -47,7 +47,7 @@ public class AccountController {
         return ResponseEntity.ok().body(dto);
     }
 
-//    // 이체 폼 페이지쟈
+//    이체 폼 페이지
 //    @GetMapping("/transfer")
 //    public String showTransferForm() {
 //        return "transfer";
@@ -62,6 +62,7 @@ public class AccountController {
         model.addAttribute("success", success);
         return "transfer_result";
     }
+
     // 입금 (Deposit)
     @PostMapping("/deposit")
     public ResponseEntity<String> deposit(@RequestBody DepositRequestDTO requestDTO) {
@@ -76,9 +77,9 @@ public class AccountController {
     // 증권 계좌 이체 비율 설정
     @PostMapping("/set-ratio")
     // accountNumber --> 계좌 번호 받음, ratio --> 이체 비율(%) 받음
-    public ResponseEntity<String> setTransferRatio(@RequestParam String accountNumber, @RequestParam int ratio) {
+    public ResponseEntity<String> setTransferRatio(@RequestBody TransferRatioDTO requestDTO) {
         // 투자 비율 업데이트
-        accountService.setTransferRatio(accountNumber, ratio);
+        accountService.setTransferRatio(requestDTO.getAccountNumber(), requestDTO.getRatio());
         // 백엔드 응답(200)
         return ResponseEntity.ok("파킹 통장 투자 비율 업데이트 완료!!!");
     }
