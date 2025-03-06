@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.team4.sol_server.domain.account.dto.AccountDTO;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
+import org.team4.sol_server.domain.account.entity.AccountHistoryEntity;
+import org.team4.sol_server.domain.account.repository.AccountHistoryRepository;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
 
-import java.math.BigInteger;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class AccountService {
     // 데이터베이스에서 계좌 조회, 입금, 출금, 이체, 이체 비율 설정, 이자 계산 등을 처리
     private final AccountRepository accountRepository;
+    private final AccountHistoryRepository accountHistoryRepository;
 
     public Optional<AccountEntity> getAccountByNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber);
@@ -60,7 +63,7 @@ public class AccountService {
     public void setTransferRatio(String accountNumber, int ratio) {
         Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
         accountOpt.ifPresent(account -> {
-            account.setInvestorRatio(ratio); // 파킹통장 "투자 비율" 업데이트
+            account.setInvestorRatio(ratio);
             accountRepository.save(account);
         });
     }
@@ -77,11 +80,11 @@ public class AccountService {
     public AccountDTO collectInterest(String accountNumber) {
         Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
         if (accountOpt.isPresent()) {
-            AccountEntity account = accountOpt.get(); // 계좌 정보 가져오기
+            AccountEntity account = accountOpt.get();
             // 이자 계산 = 잔액 * (이자율/100.0)
             int interest = (int) (account.getBalance() * (account.getInterestRatio() / 100.0));
-            account.setInterest(interest); // 이자 저장
-            account.setBalance(account.getBalance() + interest); // 기존 잔액 + 이자
+            account.setInterest(interest);
+            account.setBalance(account.getBalance() + interest);
             accountRepository.save(account);
 
             return AccountDTO.builder()
@@ -97,4 +100,11 @@ public class AccountService {
         Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
         return accountOpt.map(AccountEntity::getInterest).orElse(0);
     }
+
+    // 거래 내역 조회
+    @Transactional(readOnly = true)
+    public List<AccountHistoryEntity> getAccountHistory(String accountNumber) {
+        return accountHistoryRepository.findByAccountAccountNumber(accountNumber);
+    }
+
 }
