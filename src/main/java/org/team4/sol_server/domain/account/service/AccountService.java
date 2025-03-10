@@ -12,7 +12,17 @@ import org.team4.sol_server.domain.account.repository.AccountRepository;
 
 import java.util.List;
 import java.util.Optional;
-
+/*
+파일명 : AccountService.java
+생성자 : JDeok
+날 짜  : 2025.03.05
+시 간  : 오후 02:14
+기 능  : 계좌Service
+Params :
+Return :
+변경사항
+     - 2025.03.05 : JDeok(최초작성)
+*/
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -20,30 +30,55 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountHistoryRepository accountHistoryRepository;
 
+    /** 계좌테이블 조회 **/
     public Optional<AccountEntity> getAccountByNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber);
     }
 
+    /**
+     * 계좌이체 로직
+     **/
     @Transactional
-    public boolean transfer(String fromAccountNumber, String toAccountNumber, Long amount) {
+    public String transfer(String fromAccountNumber, String toAccountNumber, Long amount) {
         Optional<AccountEntity> fromAccountOpt = accountRepository.findByAccountNumber(fromAccountNumber); // 출금 계좌
-        Optional<AccountEntity> toAccountOpt = accountRepository.findByAccountNumber(toAccountNumber); // 입금 계좌
+        Optional<AccountEntity> toAccountOpt = accountRepository.findByAccountNumber(toAccountNumber);     // 입금 계좌
 
-        if (fromAccountOpt.isPresent() && toAccountOpt.isPresent()) {
-            AccountEntity fromAccount = fromAccountOpt.get();
-            AccountEntity toAccount = toAccountOpt.get();
+        AccountEntity fromAccount = fromAccountOpt.get();
+        AccountEntity toAccount = toAccountOpt.get();
 
-            if (fromAccount.getBalance() >= amount) {
-                fromAccount.setBalance(fromAccount.getBalance() - amount);
-                toAccount.setBalance(toAccount.getBalance() + amount);
-                accountRepository.save(fromAccount);
-                accountRepository.save(toAccount);
-                return true;
-            }
+        if(fromAccount.getBalance() < amount) {
+            return "잔액이 부족합니다.";
         }
-        return false;
+
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+
+        return "이체 완료 되었습니다.";
     }
 
+    /** 계좌 체크 **/
+    public String checkAccounts(String fromAccount, String toAccount) {
+        Optional<AccountEntity> fromAccountOpt = accountRepository.findByAccountNumber(fromAccount);
+        Optional<AccountEntity> toAccountOpt = accountRepository.findByAccountNumber(toAccount);
+
+        if(fromAccountOpt.equals(toAccountOpt)) {
+            return "출금 계좌와 입금 계좌가 동일할 수 없습니다.";
+        }
+        if (fromAccountOpt.isEmpty()) {
+            return "출금 계좌가 존재하지 않습니다.";
+        }
+        if (toAccountOpt.isEmpty()) {
+            return "입금 계좌가 존재하지 않습니다.";
+        }
+
+
+        return "VALID";  //  모든 계좌가 정상적으로 존재함
+
+    }
+    /** 입금 로직 (test용) **/
     @Transactional
     public boolean deposit(String accountNumber, Long amount) {
         Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
@@ -106,5 +141,4 @@ public class AccountService {
     public List<AccountHistoryEntity> getAccountHistory(String accountNumber) {
         return accountHistoryRepository.findByAccountAccountNumber(accountNumber);
     }
-
 }
