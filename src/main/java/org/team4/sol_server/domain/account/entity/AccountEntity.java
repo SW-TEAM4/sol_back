@@ -17,10 +17,11 @@ public class AccountEntity extends BaseEntity {
 //        @ManyToOne
 //        @JoinColumn(name = "user_idx", nullable = false)
 //        private UserEntity user;
-
+        // Q. DB와 같은 변수명?
         @Id
         @Column(name = "account_no", nullable = false, unique = true)
         private String accountNumber;
+
 
         // 임시
         @Column(name = "user_idx", nullable = false)
