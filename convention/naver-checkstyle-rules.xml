@@ -248,8 +248,6 @@ The following rules in the Naver coding convention cannot be checked by this con
 				value="[blankline-after-package] ''{0}'' should be separated from previous statement."/>
 		</module>
 		-->
-
-
 		<!-- [blankline-between-methods] -->
 		<module name="EmptyLineSeparator">
 			<property name="tokens" value="METHOD_DEF"/>
