@@ -11,9 +11,11 @@ import org.team4.sol_server.domain.account.dto.TransferRequestDTO;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
 import org.team4.sol_server.domain.account.entity.AccountHistoryEntity;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
+import org.team4.sol_server.domain.account.service.AccountHistoryService;
 import org.team4.sol_server.domain.account.service.AccountService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /*
@@ -27,14 +29,17 @@ Return :
 변경사항
      - 2025.03.05 : JDeok(최초작성)
 */
+
 @RestController
 @RequestMapping("api/account")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3001")
 public class AccountController {
 
     private final AccountService accountService;
-    private final AccountRepository accountRepository;
+//    private final AccountRepository accountRepository;
+
+    private final AccountHistoryService accountHistoryService;
 
     // 계좌 조회 페이지
     @GetMapping("/balance")
@@ -49,12 +54,6 @@ public class AccountController {
 
         return ResponseEntity.ok().body(dto);
     }
-
-//    이체 폼 페이지
-//    @GetMapping("/transfer")
-//    public String showTransferForm() {
-//        return "transfer";
-//    }
 
     // 이체 기능 수행
     @PostMapping("/transfer")
@@ -82,7 +81,7 @@ public class AccountController {
     // accountNumber --> 계좌 번호 받음, ratio --> 이체 비율(%) 받음
     public ResponseEntity<String> setTransferRatio(@RequestBody TransferRatioDTO requestDTO) {
         accountService.setTransferRatio(requestDTO.getAccountNumber(), requestDTO.getRatio()); // 투자 비율 업데이트
-        return ResponseEntity.ok("파킹 통장 투자 비율 업데이트 완료!!!");
+        return ResponseEntity.ok("증권 계좌 이체 비율 설정: " + requestDTO.getRatio());
     }
 
     // 증권 계좌 이체 비율 조회
@@ -106,11 +105,22 @@ public class AccountController {
         return ResponseEntity.ok(interest);
     }
 
-    // 해당 계좌 통장 내역 조회
     @GetMapping("/history")
-    public ResponseEntity<List<AccountHistoryEntity>> getAccountHistory(@RequestParam String accountNumber) {
-        List<AccountHistoryEntity> historyList = accountService.getAccountHistory(accountNumber);
-        return ResponseEntity.ok(historyList);
+    public ResponseEntity<List<Map<String, Object>>> getAccountHistory(
+            @RequestParam String accountNumber) {
+        List<Map<String, Object>> history = accountHistoryService.getTransactionHistory(accountNumber);
+        return ResponseEntity.ok(history);
+    }
+
+    @PostMapping("/add-transaction")
+    public ResponseEntity<String> addTransaction(
+            @RequestParam String accountNumber,
+            @RequestParam int amount,
+            @RequestParam String desWitType,
+            @RequestParam String displayName) {
+
+        accountService.addTransaction(accountNumber, amount, desWitType, displayName);
+        return ResponseEntity.ok("거래 내역 추가 및 잔액 업데이트 완료");
     }
 
 }

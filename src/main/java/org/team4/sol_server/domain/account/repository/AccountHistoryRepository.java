@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface AccountHistoryRepository extends JpaRepository<AccountHistoryEntity, Integer> {
-    // 특정 계좌의 거래 내역 조회
-    List<AccountHistoryEntity> findByAccountAccountNumber(String accountNumber);
+    // 기존 메서드 → 정렬 추가
+    List<AccountHistoryEntity> findByAccountAccountNumberOrderByCreatedDesc(String accountNumber);
 }

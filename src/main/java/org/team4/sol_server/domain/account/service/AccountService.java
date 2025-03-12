@@ -81,11 +81,30 @@ public class AccountService {
         Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
         if (accountOpt.isPresent()) {
             AccountEntity account = accountOpt.get();
-            // 이자 계산 = 잔액 * (이자율/100.0)
-            int interest = (int) (account.getBalance() * (account.getInterestRatio() / 100.0));
-            account.setInterest(interest);
-            account.setBalance(account.getBalance() + interest);
+
+            int interest = account.getInterest();
+            if (interest <= 0) {
+                throw new RuntimeException("적립된 이자가 없습니다."); // 예외 처리 추가
+            }
+
+            long previousBalance = account.getBalance();
+            long newBalance = previousBalance + interest;
+
+            // 계좌 잔액 업데이트
+            account.setInterest(0); // 이자 초기화
+            account.setBalance(newBalance);
             accountRepository.save(account);
+
+            // 이자 입금 내역을 거래 기록(AccountHistoryEntity)에 추가
+            AccountHistoryEntity transaction = AccountHistoryEntity.builder()
+                    .account(account)
+                    .preBalance(previousBalance)  // 기존 잔액
+                    .transferBalance(interest)   // 이자 금액
+                    .desWitType("0")             // '입금' 표시
+                    .displayName("이자 입금")     // 거래 설명
+                    .build();
+
+            accountHistoryRepository.save(transaction);
 
             return AccountDTO.builder()
                     .accountNumber(account.getAccountNumber())
@@ -101,10 +120,31 @@ public class AccountService {
         return accountOpt.map(AccountEntity::getInterest).orElse(0);
     }
 
-    // 거래 내역 조회
-    @Transactional(readOnly = true)
-    public List<AccountHistoryEntity> getAccountHistory(String accountNumber) {
-        return accountHistoryRepository.findByAccountAccountNumber(accountNumber);
+    @Transactional
+    public void addTransaction(String accountNumber, int amount, String desWitType, String displayName) {
+        Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
+
+        if (accountOpt.isPresent()) {
+            AccountEntity account = accountOpt.get();
+
+            long previousBalance = account.getBalance();
+            long newBalance = desWitType.equals("1") ? previousBalance - amount : previousBalance + amount;
+
+            // Account 테이블 balance 업데이트
+            account.setBalance(newBalance);
+            accountRepository.save(account);
+
+            AccountHistoryEntity transaction = AccountHistoryEntity.builder()
+                    .account(account)
+                    .preBalance(previousBalance)
+                    .transferBalance(amount)
+                    .desWitType(desWitType)
+                    .displayName(displayName)
+                    .build();
+
+            accountHistoryRepository.save(transaction);
+            System.out.println("거래 내역 추가 완료 - 새로운 잔액: " + newBalance);
+        }
     }
 
 }
