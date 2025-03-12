@@ -37,15 +37,18 @@ Return :
 public class AccountController {
 
     private final AccountService accountService;
-//    private final AccountRepository accountRepository;
-
     private final AccountHistoryService accountHistoryService;
+
 
     // 계좌 조회 페이지
     @GetMapping("/balance")
-    public ResponseEntity<AccountDTO> getAccount(@RequestParam String accountNumber, Model model) {
+    public ResponseEntity<AccountDTO> getAccount(@RequestParam String accountNumber) {
         Optional<AccountEntity> account = accountService.getAccountByNumber(accountNumber);
-        account.ifPresent(value -> model.addAttribute("account", value));
+
+        // 계좌번호가 없으면 400 응답 반환
+        if(account.isEmpty()){
+            return ResponseEntity.badRequest().body(null);
+        }
 
         AccountDTO dto = AccountDTO.builder()
                 .accountNumber(account.get().getAccountNumber())
@@ -57,12 +60,27 @@ public class AccountController {
 
     // 이체 기능 수행
     @PostMapping("/transfer")
-    public String transfer(@RequestBody TransferRequestDTO transferRequestDTO, Model model) {
-        boolean success = accountService.transfer(transferRequestDTO.getFromAccount()
+    public ResponseEntity<String> transfer(@RequestBody TransferRequestDTO transferRequestDTO) {
+        System.out.println("받은 요청 데이터 : " + transferRequestDTO);
+        String result = accountService.transfer(transferRequestDTO.getFromAccount()
                                                 , transferRequestDTO.getToAccount()
                                                 , transferRequestDTO.getAmount());
-        model.addAttribute("success", success);
-        return "transfer_result";
+
+         if (result.equals("잔액이 부족합니다.")) {
+            return ResponseEntity.status(400).body(result); //  400 Bad Request
+        }
+
+        return ResponseEntity.ok(result);
+    }
+    // 계좌 체크
+    @GetMapping("/check-accounts")
+    public ResponseEntity<String> checkAccounts(@RequestParam String fromAccount, @RequestParam String toAccount) {
+        String checkResult = accountService.checkAccounts(fromAccount, toAccount);
+
+        if(!checkResult.equals("VALID")){
+            return ResponseEntity.status(400).body(checkResult);
+        }
+        return ResponseEntity.ok("계좌가 확인되었습니다.");
     }
 
     // 입금 (Deposit)
@@ -122,5 +140,4 @@ public class AccountController {
         accountService.addTransaction(accountNumber, amount, desWitType, displayName);
         return ResponseEntity.ok("거래 내역 추가 및 잔액 업데이트 완료");
     }
-
 }
