@@ -20,11 +20,6 @@ public class AccountHistoryEntity extends BaseEntity {
     @JoinColumn(name = "account_no", nullable = false)
     private AccountEntity account;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_idx", nullable = false)
-//    private UserEntity user;
-
-    // 임시
     @Column(name = "user_idx", nullable = false)
     private int userIdx;
 
@@ -32,6 +27,11 @@ public class AccountHistoryEntity extends BaseEntity {
     private String displayName;
 
     @Column(name = "pre_balance", nullable = false)
-    private int preBalance;
+    private long preBalance;
 
+    @Column(name = "transfer_balance", nullable = false)
+    private int transferBalance;
+
+    @Column(name = "des_wit_type", nullable = false)
+    private String desWitType;
 }
