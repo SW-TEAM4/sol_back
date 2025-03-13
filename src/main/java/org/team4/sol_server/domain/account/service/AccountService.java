@@ -133,7 +133,7 @@ public class AccountService {
             // 이자 입금 내역을 거래 기록(AccountHistoryEntity)에 추가
             AccountHistoryEntity transaction = AccountHistoryEntity.builder()
                     .account(account)
-                    .preBalance(previousBalance)  // 기존 잔액
+                    .preBalance(newBalance)       // 기존 잔액
                     .transferBalance(interest)   // 이자 금액
                     .desWitType("0")             // '입금' 표시
                     .displayName("이자 입금")     // 거래 설명
@@ -181,4 +181,27 @@ public class AccountService {
             System.out.println("거래 내역 추가 완료 - 새로운 잔액: " + newBalance);
         }
     }
+
+    /** 계좌이력 테이블 insert  **/
+    public String insertAccountHistroy(String fromAccount, String receiverName, Long amount, Long prebalance, String desWitType) {
+
+        AccountEntity account = accountRepository.findByAccountNumber(fromAccount).orElseThrow();
+
+        AccountHistoryEntity accountHistory = AccountHistoryEntity.builder()
+                .account(account)                     // 계좌번호
+                .displayName(receiverName)            // 받는사람
+                .transferBalance(amount.intValue())   // 보낸 금액
+                .preBalance(prebalance.intValue())    // 계좌금액
+                .desWitType(desWitType)
+                .build();
+
+        accountHistoryRepository.save(accountHistory);
+
+        return "거래 내역이 성공적으로 저장되었습니다. (보낸 사람 : " + account.getAccountNumber() + ")";
+    }
+
+    public String getUserNameByAccountNo(String accountNo) {
+        return accountRepository.findUserNameByAccountNumber(accountNo);
+    }
+
 }
