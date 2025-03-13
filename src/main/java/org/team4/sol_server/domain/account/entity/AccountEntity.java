@@ -22,10 +22,9 @@ public class AccountEntity extends BaseEntity {
         @Column(name = "account_no", nullable = false, unique = true)
         private String accountNumber;
 
-
-        // 임시
-        @Column(name = "user_idx", nullable = false)
-        private int userIdx;
+        @ManyToOne
+        @JoinColumn(name = "user_idx", referencedColumnName = "user_idx")
+        private UserEntity user; //
 
         @Column(name = "balance", nullable = false)
         private Long balance;

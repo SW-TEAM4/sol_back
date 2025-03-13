@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.team4.sol_server.domain.account.dto.AccountDTO;
-import org.team4.sol_server.domain.account.dto.DepositRequestDTO;
-import org.team4.sol_server.domain.account.dto.TransferRatioDTO;
-import org.team4.sol_server.domain.account.dto.TransferRequestDTO;
+import org.team4.sol_server.domain.account.dto.*;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
 import org.team4.sol_server.domain.account.entity.AccountHistoryEntity;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
@@ -33,7 +30,7 @@ Return :
 @RestController
 @RequestMapping("api/account")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AccountController {
 
     private final AccountService accountService;
@@ -139,5 +136,25 @@ public class AccountController {
 
         accountService.addTransaction(accountNumber, amount, desWitType, displayName);
         return ResponseEntity.ok("거래 내역 추가 및 잔액 업데이트 완료");
+    }
+
+    /** 계좌이력테이블 insert **/
+    @PostMapping("/insertAccountHistroy")
+    public ResponseEntity<String> createAccount(@RequestBody InsertAccountHistroy insertAccountHistroy) {
+        System.out.println("받은 요청 데이터 : " + insertAccountHistroy);
+        String result = accountService.insertAccountHistroy(
+                  insertAccountHistroy.getFromAccount()      // 계좌번호
+                , insertAccountHistroy.getReceiverName()     // 보내는사람
+                , insertAccountHistroy.getAmount()           // 보내는 금액
+                , insertAccountHistroy.getPrebalance()       // 현재잔고금액
+                , insertAccountHistroy.getDesWitType());     // 입,출금
+
+        return ResponseEntity.ok(result);
+    }
+
+    /* 고객 명 찾기 */
+    @GetMapping("/{accountNo}/user-name")
+    public String getUserName(@PathVariable String accountNo) {
+        return accountService.getUserNameByAccountNo(accountNo);
     }
 }
