@@ -56,7 +56,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(jwtCookie);
         response.addCookie(userIdxCookie);
 
-        response.sendRedirect("http://localhost:3000/home");
+       // response.sendRedirect("http://localhost:3000/home");
+        // 🚀 리다이렉트 URL을 /redirect로 변경하여 프론트에서 기본 정보 입력 여부를 체크하게 함
+        // ✅ 로그인 성공 후 /redirect로 리다이렉트 (기본 정보 입력 여부를 확인하도록 처리)
+        response.sendRedirect("http://localhost:3000/redirect");
+       //response.sendRedirect("http://localhost:3000/basic-info");
 
     }
 

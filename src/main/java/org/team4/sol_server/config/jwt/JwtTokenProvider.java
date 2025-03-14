@@ -1,6 +1,7 @@
 package org.team4.sol_server.config.jwt;
 
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -76,12 +77,29 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    //JWT를 HTTP 요청 헤더에서 추출하는 메서드 추가
+
     public String resolveToken(HttpServletRequest request) {
+        // Authorization 헤더에서 JWT를 추출 (기존 코드)
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7); // "Bearer " 이후의 토큰 값만 추출
         }
+
+        // 쿠키에서 JWT를 추출 (추가된 코드)
+        return getJwtFromCookie(request);  // 쿠키에서 JWT를 가져오는 메서드 호출
+    }
+
+    // 쿠키에서 JWT를 추출하는 메서드 추가
+    private String getJwtFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwtToken".equals(cookie.getName())) {  // JWT가 담긴 쿠키를 찾는다
+                    return cookie.getValue();  // 쿠키 값 반환
+                }
+            }
+        }
         return null;
     }
+
 }

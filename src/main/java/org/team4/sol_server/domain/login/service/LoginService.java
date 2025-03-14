@@ -96,17 +96,29 @@ public class LoginService {
         return result;
     }
 
-//    @Transactional
-//    public BaseResponseStatus updateUserInfo(int userIdx, String gender, Integer age, Integer job) throws BaseException {
-//        User user = userRepository.findById(userIdx)
-//                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
-//
-//        boolean isUpdated = user.updateUserFirstTime(gender, age, job);
-//        if (isUpdated) {
-//            userRepository.save(user);
-//            return BaseResponseStatus.SUCCESS;
-//        } else {
-//            return BaseResponseStatus.UPDATED_NOT_SUCCESS;
-//        }
-//    }
+    @Transactional
+    public BaseResponseStatus updateUserInfo(int userIdx, String gender, Integer age, Integer job) throws BaseException {
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        boolean isUpdated = user.updateUser(gender, age, job);
+        if (isUpdated) {
+            userRepository.save(user);
+            return BaseResponseStatus.SUCCESS;
+        } else {
+            return BaseResponseStatus.UPDATED_NOT_SUCCESS;
+        }
+    }
+
+
+    /**
+     * 기본 정보 입력 여부 확인 (job 값이 null인지 체크)
+     */
+    public boolean isBasicInfoCompleted(int userIdx) throws BaseException {
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        return user.getJob() != null; // job이 null이면 false 반환 (기본정보 입력 필요)
+    }
+
 }

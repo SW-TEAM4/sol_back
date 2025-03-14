@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Getter
 public class CustomOAuth2User implements OAuth2User {
-    private final int userIdx; // ✅ userIdx 추가
+    private final int userIdx; // userIdx 추가
     private final String username;
     private final String jwtToken;
     private final Map<String, Object> attributes; //OAuth2 데이터 저장
