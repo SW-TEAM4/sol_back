@@ -2,8 +2,8 @@ package org.team4.sol_server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.team4.sol_server.domain.user.entity.User;
-import org.team4.sol_server.domain.user.repository.UserRepository;
+import org.team4.sol_server.domain.login.entity.User;
+import org.team4.sol_server.domain.login.repository.UserRepository;
 
 /*
 파일명 : UserServiceImpl.java

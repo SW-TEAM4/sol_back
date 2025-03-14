@@ -4,12 +4,15 @@ package org.team4.sol_server.domain.login.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.team4.sol_server.domain.login.dto.OauthUserInfo;
+import org.team4.sol_server.domain.stamp.entity.Stamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -31,6 +34,9 @@ public class User {
 
     @Column(name = "user_gender", nullable = true)
     private String gender;
+
+    @Column(nullable = false)
+    private int personalInvestor;
 
     @Column(nullable = true)
     private String birthday;
@@ -103,6 +109,11 @@ public class User {
 
         return isUpdated; // 업데이트가 발생했으면 true, 아니면 false 반환
     }
+
+    //stamp
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Stamp> stamps;  // User와 Stamp의 관계
+
 
 
 

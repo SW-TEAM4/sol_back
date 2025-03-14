@@ -3,7 +3,8 @@ package org.team4.sol_server.domain.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.team4.sol_server.domain.user.entity.User;
+import org.team4.sol_server.domain.login.entity.User;
+import org.team4.sol_server.domain.login.entity.User;
 import org.team4.sol_server.domain.user.service.UserService;
 
 import java.util.Map;

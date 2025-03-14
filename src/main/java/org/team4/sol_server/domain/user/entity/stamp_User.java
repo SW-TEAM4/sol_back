@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class User extends BaseEntity {
+public class stamp_User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,8 +49,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private int job;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Stamp> stamps;  // User와 Stamp의 관계
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    private List<Stamp> stamps;  // User와 Stamp의 관계
 
     public String getInvestmentType() {
         if(personalInvestor <= 5) {
