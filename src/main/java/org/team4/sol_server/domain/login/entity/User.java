@@ -35,8 +35,8 @@ public class User {
     @Column(name = "user_gender", nullable = true)
     private String gender;
 
-    @Column(nullable = false)
-    private int personalInvestor;
+    @Column(nullable = true)
+    private Integer personalInvestor;
 
     @Column(nullable = true)
     private String birthday;
