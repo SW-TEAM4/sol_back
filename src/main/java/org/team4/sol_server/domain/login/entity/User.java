@@ -76,20 +76,32 @@ public class User {
     }
 
     /**
-     * 최초 1회만 age, job 저장
-     * gender는 매번 업데이트
+     * 모든 필드를 업데이트 (조건 없이)
      */
-    public void updateUserFirstTime(String gender, Integer age, Integer job) {
+    public boolean updateUser(String gender, Integer age, Integer job) {
+        boolean isUpdated = false;
+
+        // gender, age, job을 모두 조건 없이 업데이트
         if (gender != null) {
-            this.gender = gender; // gender는 무조건 업데이트
+            this.gender = gender; // gender 업데이트
+            isUpdated = true;
         }
-        if (this.age == null && age != null) {
-            this.age = age; // 최초 1회만 저장
+
+        if (age != null) {
+            this.age = age; // age 업데이트
+            isUpdated = true;
         }
-        if (this.job == null && job != null) {
-            this.job = job; // 최초 1회만 저장
+
+        if (job != null) {
+            this.job = job; // job 업데이트
+            isUpdated = true;
         }
-        this.updated = LocalDateTime.now();
+
+        if (isUpdated) {
+            this.updated = LocalDateTime.now(); // 업데이트가 발생하면 updated 시간 갱신
+        }
+
+        return isUpdated; // 업데이트가 발생했으면 true, 아니면 false 반환
     }
 
 

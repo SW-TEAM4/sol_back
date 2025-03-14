@@ -2,6 +2,8 @@ package org.team4.sol_server.domain.login;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.team4.sol_server.config.BaseException;
 import org.team4.sol_server.config.BaseResponse;
@@ -21,9 +23,8 @@ public class AuthController {
     private final LoginService loginService;
     private final JwtTokenProvider jwtTokenProvider;
 
-
     /**
-     *  JWT를 이용한 사용자 정보 조회 API
+     * JWT를 이용한 사용자 정보 조회 API
      */
     @GetMapping("/user/me")
     public BaseResponse<Map<String, Object>> getUserInfo(HttpServletRequest request) {
@@ -52,26 +53,54 @@ public class AuthController {
             return new BaseResponse<>(BaseResponseStatus.INVALID_JWT);
         }
     }
-}
-
 
 
     /**
-     * JWT 검증 후 사용자 정보 반환 API
+     * 유저 기본 정보 입력 (최초 1회만 age, job 저장 / gender는 매번 업데이트)
      */
-//    @PostMapping("/user/jwt")
-//    public BaseResponse<Map<String, String>> getJwtByUserInfo(
-//            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-//            @RequestBody Map<String, String> loginRequest) {
-//
-//        try {
-//            String email = loginRequest.get("email");
-//
-//            Map<String, String> result = loginService.getJwtByUserInfo(authorizationHeader, email);
-//
-//            return new BaseResponse(SUCCESS);
-//        } catch (BaseException e) {
-//            return new BaseResponse<>(e.getStatus());
-//        }
-//    }
+    @PatchMapping("/basic-info")
+    public ResponseEntity<BaseResponse<BaseResponseStatus>> updateBasicInfo(HttpServletRequest request,
+                                                                @RequestBody Map<String, Object> updates) throws BaseException {
+        String token = jwtTokenProvider.resolveToken(request);
+        Integer userIdx = jwtTokenProvider.getUserIdx(token);
+
+        if (userIdx == null) {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(BaseResponseStatus.INVALID_JWT));
+        }
+
+        BaseResponseStatus responseStatus = loginService.updateUserInfo(
+                userIdx,
+                (String) updates.get("gender"),
+                (Integer) updates.get("age"),
+                (Integer) updates.get("job")
+        );
+
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.UPDATED_SUCCESS));
+    }
+    /**
+     * 기본 정보 입력 여부 확인 API
+     */
+    @GetMapping("/check-basic-info")
+    public ResponseEntity<BaseResponse<BaseResponseStatus>> checkBasicInfo(HttpServletRequest request) {
+        try {
+            // JWT 토큰에서 userIdx 추출
+            String token = jwtTokenProvider.resolveToken(request);
+            Integer userIdx = jwtTokenProvider.getUserIdx(token);
+
+            if (userIdx == null) {
+                return ResponseEntity.badRequest().body(new BaseResponse<>(BaseResponseStatus.INVALID_JWT));
+            }
+
+            boolean isBasicInfoCompleted = loginService.isBasicInfoCompleted(userIdx);
+
+            if (isBasicInfoCompleted) {
+                return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.BASIC_INFO_ALREADY_COMPLETED));
+            } else {
+                return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.BASIC_INFO_REQUIRED));
+            }
+        } catch (BaseException e) {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(e.getStatus()));
+        }
+    }
+}
 
