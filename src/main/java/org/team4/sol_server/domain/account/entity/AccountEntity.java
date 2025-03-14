@@ -2,6 +2,7 @@ package org.team4.sol_server.domain.account.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.team4.sol_server.domain.login.entity.User;
 
 import java.math.BigInteger;
 
@@ -24,7 +25,7 @@ public class AccountEntity extends BaseEntity {
 
         @ManyToOne
         @JoinColumn(name = "user_idx", referencedColumnName = "user_idx")
-        private UserEntity user; //
+        private User user; //
 
         @Column(name = "balance", nullable = false)
         private Long balance;

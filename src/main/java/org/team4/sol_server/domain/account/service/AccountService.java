@@ -10,7 +10,6 @@ import org.team4.sol_server.domain.account.entity.AccountHistoryEntity;
 import org.team4.sol_server.domain.account.repository.AccountHistoryRepository;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
 
-import java.util.List;
 import java.util.Optional;
 /*
 파일명 : AccountService.java
@@ -32,6 +31,7 @@ public class AccountService {
 
     /** 계좌테이블 조회 **/
     public Optional<AccountEntity> getAccountByNumber(String accountNumber) {
+        System.out.println("accountNumber : " + accountNumber);
         return accountRepository.findByAccountNumber(accountNumber);
     }
 
@@ -116,15 +116,19 @@ public class AccountService {
         Optional<AccountEntity> accountOpt = accountRepository.findByAccountNumber(accountNumber);
         if (accountOpt.isPresent()) {
             AccountEntity account = accountOpt.get();
+            System.out.println("account : " + account);
 
             int interest = account.getInterest();
+            System.out.println("interest : " + interest);
+
             if (interest <= 0) {
                 throw new RuntimeException("적립된 이자가 없습니다."); // 예외 처리 추가
             }
 
             long previousBalance = account.getBalance();
             long newBalance = previousBalance + interest;
-
+            System.out.println("previousBalance : " + previousBalance);
+            System.out.println("newBalance : " + newBalance);
             // 계좌 잔액 업데이트
             account.setInterest(0); // 이자 초기화
             account.setBalance(newBalance);
@@ -204,4 +208,7 @@ public class AccountService {
         return accountRepository.findUserNameByAccountNumber(accountNo);
     }
 
+    public Optional<AccountEntity> getAccountNo(int userIdx) {
+        return accountRepository.findAccountNoByUserIdx(userIdx);
+    }
 }
