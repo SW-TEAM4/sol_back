@@ -34,7 +34,23 @@ public enum BaseResponseStatus {
      * 4000 : 기본 정보 관련 응답
      */
     BASIC_INFO_REQUIRED(true, 4001, "기본 정보 입력이 필요합니다."),
-    BASIC_INFO_ALREADY_COMPLETED(true, 4002, "이미 기본 정보를 입력했습니다.");
+    BASIC_INFO_ALREADY_COMPLETED(true, 4002, "이미 기본 정보를 입력했습니다."),
+
+    /**
+     * 5000 : 스탬프 관련 응답
+     */
+    STAMP_NOT_YET(false, 5001, "아직 스탬프를 찍지 않았습니다."),  // 추가된 응답 코드
+
+    /**
+     * 6000 : 사용자 점수 관련 응답
+     */
+    SCORE_SAVE_SUCCESS(true, 6001, "점수 저장 성공."),
+    SCORE_SAVE_FAILED(false, 6002, "점수 저장 실패."),
+    SCORE_FETCH_SUCCESS(true, 6003, "점수 조회 성공."),
+    SCORE_FETCH_FAILED(false, 6004, "점수 조회 실패."),
+    USER_NAME_FETCH_SUCCESS(true, 6005, "사용자 이름 조회 성공."),
+    USER_NAME_FETCH_FAILED(false, 6006, "사용자 이름 조회 실패.");
+
 
 
     private final boolean isSuccess;
