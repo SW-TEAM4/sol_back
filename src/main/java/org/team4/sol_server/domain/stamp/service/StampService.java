@@ -3,9 +3,9 @@ package org.team4.sol_server.domain.stamp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.team4.sol_server.domain.login.repository.UserRepository;
 import org.team4.sol_server.domain.stamp.entity.Stamp;
 import org.team4.sol_server.domain.stamp.repository.StampRepository;
-import org.team4.sol_server.domain.user.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -60,7 +60,7 @@ public class StampService {
         if (!challengeStartDate.isPresent()) {
             // 처음 스탬프 찍는 경우, 새로운 스탬프 기록을 저장
             Stamp newStamp = new Stamp();
-            newStamp.setUser(userRepository.findById(userIdx).orElse(null)); // 유저 정보 설정
+            newStamp.setUser(userRepository.findByUserIdx(userIdx).orElse(null)); // 유저 정보 설정
             newStamp.setDay(today.getDayOfMonth());
             newStamp.setStamped(true);
             newStamp.setUpdated(LocalDateTime.now());
@@ -82,6 +82,18 @@ public class StampService {
             // 1일 이상 스탬프를 놓쳤다면 다른 이미지 처리
             return false;  // 다른 이미지로 처리
         }
+
+        // 마지막으로 찍은 스탬프의 날짜와 비교
+        Optional<Stamp> lastStamp = stampRepository.findTopByUser_UserIdxOrderByDayDesc(userIdx);
+//        if (lastStamp.isPresent() && lastStamp.get().getDay() != today.getDayOfMonth()) {
+//            // 오늘 날짜가 아니라면, 이전 날 스탬프는 다른 이미지 처리
+////            int missedDay = today.getDayOfMonth() - lastStamp.get().getDay();
+//
+//            if (missedDay > 1) {
+//                // 1일 이상 스탬프를 놓쳤다면 다른 이미지 처리
+//                return false;  // 다른 이미지로 처리
+//            }
+//        }
 
         // 1~30일까지 찍을 수 있는 스탬프 찾기
         for (int day = 1; day <= 30; day++) {

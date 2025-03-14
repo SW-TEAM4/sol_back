@@ -1,6 +1,6 @@
 package org.team4.sol_server.domain.user.service;
 
-import org.team4.sol_server.domain.user.entity.User;
+import org.team4.sol_server.domain.login.entity.User;
 
 import java.util.Map;
 
