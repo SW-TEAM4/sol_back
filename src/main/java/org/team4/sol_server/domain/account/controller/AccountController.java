@@ -105,7 +105,6 @@ public class AccountController {
     // 이자 받기
     @PostMapping("/collect-interest")
     public ResponseEntity<AccountDTO> collectInterest(@RequestParam String accountNumber) {
-        System.out.println("■■■■■■■■■■■ START COLLECT INTEREST : " + accountNumber + "■■■■■■■■■■■");
         AccountDTO updatedAccount = accountService.collectInterest(accountNumber); // 투자 비율을 기준으로 이자 계산 및 계좌 잔액 증가 함수
         return ResponseEntity.ok(updatedAccount);
     }
@@ -155,6 +154,7 @@ public class AccountController {
     public String getUserName(@PathVariable String accountNo) {
         return accountService.getUserNameByAccountNo(accountNo);
     }
+
     /**
      * user_idx로  account_No 가져오기
      **/

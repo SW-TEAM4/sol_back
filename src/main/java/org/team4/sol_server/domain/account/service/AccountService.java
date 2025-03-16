@@ -40,8 +40,8 @@ public class AccountService {
      **/
     @Transactional
     public String transfer(String fromAccountNumber, String toAccountNumber, Long amount) {
-        Optional<AccountEntity> fromAccountOpt = accountRepository.findByAccountNumber(fromAccountNumber); // 출금 계좌
-        Optional<AccountEntity> toAccountOpt = accountRepository.findByAccountNumber(toAccountNumber);     // 입금 계좌
+        Optional<AccountEntity> fromAccountOpt = accountRepository.findByAccountNumber(fromAccountNumber);
+        Optional<AccountEntity> toAccountOpt = accountRepository.findByAccountNumber(toAccountNumber);
 
         AccountEntity fromAccount = fromAccountOpt.get();
         AccountEntity toAccount = toAccountOpt.get();
@@ -50,11 +50,16 @@ public class AccountService {
             return "잔액이 부족합니다.";
         }
 
+        // 출금 및 입금 처리
         fromAccount.setBalance(fromAccount.getBalance() - amount);
         toAccount.setBalance(toAccount.getBalance() + amount);
 
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
+
+        // 거래 내역 추가
+        insertAccountHistroy(fromAccountNumber, toAccount.getAccountNumber(), amount, fromAccount.getBalance(), "1");
+        insertAccountHistroy(toAccountNumber, fromAccount.getAccountNumber(), amount, toAccount.getBalance(), "0");
 
         return "이체 완료 되었습니다.";
     }
@@ -169,39 +174,45 @@ public class AccountService {
             long previousBalance = account.getBalance();
             long newBalance = desWitType.equals("1") ? previousBalance - amount : previousBalance + amount;
 
-            // Account 테이블 balance 업데이트
             account.setBalance(newBalance);
             accountRepository.save(account);
 
             AccountHistoryEntity transaction = AccountHistoryEntity.builder()
                     .account(account)
-                    .preBalance(previousBalance)
+                    .preBalance(newBalance)
                     .transferBalance(amount)
                     .desWitType(desWitType)
                     .displayName(displayName)
                     .build();
 
             accountHistoryRepository.save(transaction);
+
             System.out.println("거래 내역 추가 완료 - 새로운 잔액: " + newBalance);
         }
     }
 
     /** 계좌이력 테이블 insert  **/
+    @Transactional
     public String insertAccountHistroy(String fromAccount, String receiverName, Long amount, Long prebalance, String desWitType) {
 
-        AccountEntity account = accountRepository.findByAccountNumber(fromAccount).orElseThrow();
+        // 계좌 정보 가져오기
+        AccountEntity account = accountRepository.findByAccountNumber(fromAccount)
+                .orElseThrow(() -> new RuntimeException("계좌를 찾을 수 없습니다."));
+
+        // 보낸 사람의 이름 가져오기
+        String senderName = accountRepository.findUserNameByAccountNumber(fromAccount);
 
         AccountHistoryEntity accountHistory = AccountHistoryEntity.builder()
                 .account(account)                     // 계좌번호
-                .displayName(receiverName)            // 받는사람
+                .displayName(receiverName)            // 받는 사람 (예: '우지호')
                 .transferBalance(amount.intValue())   // 보낸 금액
                 .preBalance(prebalance.intValue())    // 계좌금액
-                .desWitType(desWitType)
+                .desWitType(desWitType)               // 입출금 타입
                 .build();
 
         accountHistoryRepository.save(accountHistory);
 
-        return "거래 내역이 성공적으로 저장되었습니다. (보낸 사람 : " + account.getAccountNumber() + ")";
+        return "거래 내역 저장 완료: " + senderName + " → " + receiverName;
     }
 
     public String getUserNameByAccountNo(String accountNo) {

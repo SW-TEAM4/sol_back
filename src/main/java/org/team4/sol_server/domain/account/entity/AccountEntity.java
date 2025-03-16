@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.team4.sol_server.domain.login.entity.User;
 
-import java.math.BigInteger;
-
 @Entity
 @Getter
 @Setter
@@ -15,20 +13,16 @@ import java.math.BigInteger;
 @Table(name = "account")
 public class AccountEntity extends BaseEntity {
 
-//        @ManyToOne
-//        @JoinColumn(name = "user_idx", nullable = false)
-//        private UserEntity user;
-        // Q. DB와 같은 변수명?
         @Id
         @Column(name = "account_no", nullable = false, unique = true)
         private String accountNumber;
 
         @ManyToOne
         @JoinColumn(name = "user_idx", referencedColumnName = "user_idx")
-        private User user; //
+        private User user;
 
         @Column(name = "balance", nullable = false)
-        private Long balance;
+        private Long balance = 0L;
 
         @Column(name = "investor_ratio", nullable = false)
         private int investorRatio;  // 이체 비율
