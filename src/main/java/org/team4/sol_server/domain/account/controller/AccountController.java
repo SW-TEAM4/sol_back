@@ -2,12 +2,9 @@ package org.team4.sol_server.domain.account.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.team4.sol_server.domain.account.dto.*;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
-import org.team4.sol_server.domain.account.entity.AccountHistoryEntity;
-import org.team4.sol_server.domain.account.repository.AccountRepository;
 import org.team4.sol_server.domain.account.service.AccountHistoryService;
 import org.team4.sol_server.domain.account.service.AccountService;
 
@@ -156,5 +153,13 @@ public class AccountController {
     @GetMapping("/{accountNo}/user-name")
     public String getUserName(@PathVariable String accountNo) {
         return accountService.getUserNameByAccountNo(accountNo);
+    }
+
+    /**
+     * user_idx로  account_No 가져오기
+     **/
+    @GetMapping("/getAccountNo")
+    public Optional<AccountEntity> getAccountNo(@RequestParam int userIdx) {
+        return accountService.getAccountNo(userIdx);
     }
 }

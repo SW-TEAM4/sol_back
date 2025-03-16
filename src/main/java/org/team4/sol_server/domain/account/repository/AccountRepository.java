@@ -2,6 +2,7 @@ package org.team4.sol_server.domain.account.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.team4.sol_server.domain.account.entity.AccountEntity;
 
@@ -10,7 +11,11 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     Optional<AccountEntity> findByAccountNumber(String accountNumber);
 
-    @Query("SELECT a.user.userName FROM AccountEntity a WHERE a.accountNumber = :accountNumber")
+    /* 이름 추출 */
+    @Query("SELECT a.user.username FROM AccountEntity a WHERE a.accountNumber = :accountNumber")
     String findUserNameByAccountNumber(String accountNumber);
 
+    /*계좌 추출*/
+    @Query("SELECT a.accountNumber FROM AccountEntity a WHERE a.user.userIdx = :userIdx")
+    Optional<AccountEntity> findAccountNoByUserIdx(@Param("userIdx")int userIdx);
 }

@@ -1,3 +1,4 @@
+/*
 package org.team4.sol_server.domain.account.entity;
 
 import jakarta.persistence.*;
@@ -20,3 +21,4 @@ public class UserEntity {
     private String userName;
 
 }
+*/
