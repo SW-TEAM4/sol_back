@@ -29,4 +29,11 @@ public interface StampRepository extends JpaRepository<Stamp, Integer> {
     // ⭐ 사용자의 첫 번째(가장 오래된) 스탬프 기록 조회 (챌린지 시작 날짜용)
     @Query("SELECT s.created FROM Stamp s WHERE s.user.userIdx = :userIdx ORDER BY s.created ASC LIMIT 1")
     Optional<LocalDateTime> findFirstStampDateByUserIdx(@Param("userIdx") int userIdx);
+
+    // ✅ 특정 날짜(day)에 찍지 않은 스탬프 목록 조회
+    List<Stamp> findByIsStampedFalseAndDay(int day);
+
+    // 유저의 스탬프 개수 카운트 (이미 찍힌 스탬프만)
+    long countByUser_UserIdxAndIsStampedTrue(int userIdx);
+
 }

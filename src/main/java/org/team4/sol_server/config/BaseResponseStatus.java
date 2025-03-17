@@ -39,7 +39,11 @@ public enum BaseResponseStatus {
     /**
      * 5000 : 스탬프 관련 응답
      */
-    STAMP_NOT_YET(false, 5001, "아직 스탬프를 찍지 않았습니다."),  // 추가된 응답 코드
+    STAMP_NOT_YET(false, 5001, "아직 스탬프를 찍지 않았습니다."),
+    STAMP_SAVE(true, 5002, "스탬프가 저장되었습니다."), // 스탬프 정상 저장
+    STAMP_NOT_SAVE(false, 5003, "스탬프가 저장되지 않았습니다."), // 스탬프 저장 실패
+    STAMP_TIME(true, 5004, "챌린지 시작 날짜"), // 챌린지 시작 날짜
+    STAMP_HISTORY(true, 5005, "스탬프 기록"), // 스탬프 기록 조회 성공// 추가된 응답 코드
 
     /**
      * 6000 : 사용자 점수 관련 응답
@@ -50,8 +54,6 @@ public enum BaseResponseStatus {
     SCORE_FETCH_FAILED(false, 6004, "점수 조회 실패."),
     USER_NAME_FETCH_SUCCESS(true, 6005, "사용자 이름 조회 성공."),
     USER_NAME_FETCH_FAILED(false, 6006, "사용자 이름 조회 실패.");
-
-
 
     private final boolean isSuccess;
     private final int code;
