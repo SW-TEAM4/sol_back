@@ -76,7 +76,7 @@ public class AccountService {
             return "출금 계좌가 존재하지 않습니다.";
         }
         if (toAccountOpt.isEmpty()) {
-            return "입금 계좌가 존재하지 않습니다.";
+            return "입력하신 계좌가 존재하지 않습니다.";
         }
 
 
