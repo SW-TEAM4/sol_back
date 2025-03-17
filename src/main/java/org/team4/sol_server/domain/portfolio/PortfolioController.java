@@ -9,7 +9,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/portfolio")
+@RequestMapping("/portfolio")
 public class PortfolioController {
 
     @Autowired

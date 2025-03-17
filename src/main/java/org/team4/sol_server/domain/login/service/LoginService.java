@@ -53,7 +53,10 @@ public class LoginService {
         return Map.of(
                 "userIdx", user.getUserIdx(),
                 "username", user.getUsername(),
-                "email", user.getEmail()
+                "email", user.getEmail(),
+                "gender", user.getGender(),
+                "job" , user.getJob(),
+                "age", user.getAge()
         );
     }
 
