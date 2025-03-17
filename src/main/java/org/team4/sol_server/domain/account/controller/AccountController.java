@@ -71,10 +71,7 @@ public class AccountController {
     public ResponseEntity<String> checkAccounts(@RequestParam String fromAccount, @RequestParam String toAccount) {
         String checkResult = accountService.checkAccounts(fromAccount, toAccount);
 
-        if(!checkResult.equals("VALID")){
-            return ResponseEntity.status(400).body(checkResult);
-        }
-        return ResponseEntity.ok("계좌가 확인되었습니다.");
+        return ResponseEntity.ok(checkResult);
     }
 
     // 입금 (Deposit)
