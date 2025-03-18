@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.team4.sol_server.domain.stock.dto.DailyStockDTO;
 import org.team4.sol_server.domain.stock.dto.MonthlyStockDTO;
@@ -17,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class StockServiceTests {
+public class LiveLiveStockServiceTests {
     @Mock
-    private StockRepository stockRepository;  // Mock StockRepository
+    private LiveStockRepository liveStockRepository;  // Mock StockRepository
 
     @InjectMocks
-    private StockService stockService;  // StockService에 Mock된 repository를 주입
+    private LiveStockService liveStockService;  // StockService에 Mock된 repository를 주입
 
     private String ticker;
     private String endDate;
@@ -37,10 +36,10 @@ public class StockServiceTests {
     @Test
     void testGetDailyStock() {
         // 정상적으로 db에 데이터가 존재하는 경우
-        List<DailyStockDTO> result = stockService.getDailyStockData(ticker, endDate);
+        List<DailyStockDTO> result = liveStockService.getDailyStockData(ticker, endDate);
 
         // 요청 날짜 이전에 데이터가 없는 경우
-        List<DailyStockDTO> result2 = stockService.getDailyStockData(ticker, oldDate);
+        List<DailyStockDTO> result2 = liveStockService.getDailyStockData(ticker, oldDate);
 
         // 정상적인 경우 널이 아님
         assertNotNull(result);
@@ -53,10 +52,10 @@ public class StockServiceTests {
     @Test
     void testGetWeeklyStock() {
         // 정상적으로 db에 데이터가 존재하는 경우
-        List<WeeklyStockDTO> result = stockService.getWeeklyStockData(ticker, endDate);
+        List<WeeklyStockDTO> result = liveStockService.getWeeklyStockData(ticker, endDate);
 
         // 요청 날짜 이전에 데이터가 없는 경우
-        List<WeeklyStockDTO> result2 = stockService.getWeeklyStockData(ticker, oldDate);
+        List<WeeklyStockDTO> result2 = liveStockService.getWeeklyStockData(ticker, oldDate);
 
         // 정상적인 경우 널이 아님
         assertNotNull(result);
@@ -69,10 +68,10 @@ public class StockServiceTests {
     @Test
     void testGetMonthlyStock() {
         // 정상적으로 db에 데이터가 존재하는 경우
-        List<MonthlyStockDTO> result = stockService.getMonthlyStockData(ticker, endDate);
+        List<MonthlyStockDTO> result = liveStockService.getMonthlyStockData(ticker, endDate);
 
         // 요청 날짜 이전에 데이터가 없는 경우
-        List<MonthlyStockDTO> result2 = stockService.getMonthlyStockData(ticker, oldDate);
+        List<MonthlyStockDTO> result2 = liveStockService.getMonthlyStockData(ticker, oldDate);
 
         // 정상적인 경우 널이 아님
         assertNotNull(result);
@@ -85,10 +84,10 @@ public class StockServiceTests {
     @Test
     void testGetYearlyStock() {
         // 정상적으로 db에 데이터가 존재하는 경우
-        List<YearlyStockDTO> result = stockService.getYearlyStockData(ticker, endDate);
+        List<YearlyStockDTO> result = liveStockService.getYearlyStockData(ticker, endDate);
 
         // 요청 날짜 이전에 데이터가 없는 경우
-        List<YearlyStockDTO> result2 = stockService.getYearlyStockData(ticker, oldDate);
+        List<YearlyStockDTO> result2 = liveStockService.getYearlyStockData(ticker, oldDate);
 
         // 정상적인 경우 널이 아님
         assertNotNull(result);

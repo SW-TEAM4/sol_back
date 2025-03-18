@@ -2,9 +2,7 @@ package org.team4.sol_server.domain.stock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.team4.sol_server.domain.stock.dto.DailyStockDTO;
 import org.team4.sol_server.domain.stock.dto.MonthlyStockDTO;
 import org.team4.sol_server.domain.stock.dto.WeeklyStockDTO;
@@ -19,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class StockService {
+public class LiveStockService {
 
-    private final StockRepository stockRepository;
+    private final LiveStockRepository liveStockRepository;
     /*
     *   daily이면 end_date에서 100일 전까지 데이터를 가져오기
     *   weekly이면 end_date에서 1년 전까지 데이터를 가져오기
@@ -35,7 +33,7 @@ public class StockService {
         LocalDate endDate = today.minusDays((page - 1) * 120);
 
         // 티커 및 조건에 해당하는 일별 데이터 조회
-        List<Stock> dailyData = stockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
+        List<LiveStock> dailyData = liveStockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
 
         // 만약 데이터가 없다면 빈 리스트를 반환
         if (dailyData.isEmpty()) {
@@ -43,15 +41,15 @@ public class StockService {
         }
 
         return dailyData.stream()
-                    .sorted(Comparator.comparing(Stock::getDate)) // 날짜순 정렬
-                    .map(stock -> DailyStockDTO.builder()
-                            .ticker(stock.getTicker())
-                            .date(stock.getDate().toString())  // LocalDate -> String 변환
-                            .startPrice(stock.getStartPrice())
-                            .endPrice(stock.getEndPrice())
-                            .highPrice(stock.getHighPrice())
-                            .lowPrice(stock.getLowPrice())
-                            .volume(stock.getVolume())
+                    .sorted(Comparator.comparing(LiveStock::getDate)) // 날짜순 정렬
+                    .map(liveStock -> DailyStockDTO.builder()
+                            .ticker(liveStock.getTicker())
+                            .date(liveStock.getDate().toString())  // LocalDate -> String 변환
+                            .startPrice(liveStock.getStartPrice())
+                            .endPrice(liveStock.getEndPrice())
+                            .highPrice(liveStock.getHighPrice())
+                            .lowPrice(liveStock.getLowPrice())
+                            .volume(liveStock.getVolume())
                             .build())
                     .collect(Collectors.toList());
     }
@@ -86,7 +84,7 @@ public class StockService {
     // 일별 데이터를 주별로 변환
     private List<WeeklyStockDTO> convertToWeekly(String ticker, LocalDate startDate, LocalDate endDate) {
         // 티커에 해당하는 일별 데이터 조회
-        List<Stock> dailyData =  stockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
+        List<LiveStock> dailyData =  liveStockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
 
         // 만약 데이터가 없다면 빈 리스트를 반환
         if (dailyData.isEmpty()) {
@@ -94,9 +92,9 @@ public class StockService {
         }
 
         // 주별로 데이터를 그룹화하여 변환
-        Map<String, List<Stock>> groupedByWeek = dailyData.stream()
-            .collect(Collectors.groupingBy(stock -> {
-                LocalDate date = stock.getDate();
+        Map<String, List<LiveStock>> groupedByWeek = dailyData.stream()
+            .collect(Collectors.groupingBy(liveStock -> {
+                LocalDate date = liveStock.getDate();
                 WeekFields weekFields = WeekFields.of(Locale.getDefault()); // 기본 로케일
                 int weekOfYear = date.get(weekFields.weekOfYear()); // 주 번호
                 // 금요일로 주 시작일 계산 (금요일로 시작일 설정)
@@ -107,16 +105,16 @@ public class StockService {
             }));
         List<WeeklyStockDTO> weeklyDataList = new ArrayList<>();
         // 주별로 데이터 처리 및 DTO 생성
-        for (Map.Entry<String, List<Stock>> entry : groupedByWeek.entrySet()) {
+        for (Map.Entry<String, List<LiveStock>> entry : groupedByWeek.entrySet()) {
             String weekDateEntry = entry.getKey();
-            List<Stock> weekData = entry.getValue();
+            List<LiveStock> weekData = entry.getValue();
 
             // 주별 시가, 종가, 고가, 저가, 거래량 계산
             int weeklyStartPrice = weekData.get(0).getStartPrice();
             int weeklyEndPrice = weekData.get(weekData.size() - 1).getEndPrice();
-            int weeklyHighPrice = weekData.stream().mapToInt(Stock::getHighPrice).max().orElse(0);
-            int weeklyLowPrice = weekData.stream().mapToInt(Stock::getLowPrice).min().orElse(0);
-            long weeklyVolume = weekData.stream().mapToLong(Stock::getVolume).sum();
+            int weeklyHighPrice = weekData.stream().mapToInt(LiveStock::getHighPrice).max().orElse(0);
+            int weeklyLowPrice = weekData.stream().mapToInt(LiveStock::getLowPrice).min().orElse(0);
+            long weeklyVolume = weekData.stream().mapToLong(LiveStock::getVolume).sum();
 
             // WeeklyStockDTO 객체 빌더 패턴으로 생성
             WeeklyStockDTO weeklyStockDTO = WeeklyStockDTO.builder()
@@ -142,7 +140,7 @@ public class StockService {
     // 일별 데이터를 월별로 변환
     private List<MonthlyStockDTO> convertToMonthly(String ticker, LocalDate startDate, LocalDate endDate) {
         // 티커에 해당하는 일별 데이터 조회
-        List<Stock> dailyData =  stockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
+        List<LiveStock> dailyData =  liveStockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
 
         // 만약 데이터가 없다면 빈 리스트를 반환
         if (dailyData.isEmpty()) {
@@ -150,25 +148,25 @@ public class StockService {
         }
 
         // 월별로 데이터를 그룹화하여 변환
-        Map<String, List<Stock>> groupedByMonth = dailyData.stream()
-                .collect(Collectors.groupingBy(stock -> {
-                    LocalDate date = stock.getDate();
+        Map<String, List<LiveStock>> groupedByMonth = dailyData.stream()
+                .collect(Collectors.groupingBy(liveStock -> {
+                    LocalDate date = liveStock.getDate();
                     return date.getYear() + "-" + (date.getMonthValue()); // 연도-월
                 }));
 
         List<MonthlyStockDTO> monthlyDataList = new ArrayList<>();
 
         // 월별로 데이터 처리 및 DTO 생성
-        for (Map.Entry<String, List<Stock>> entry : groupedByMonth.entrySet()) {
+        for (Map.Entry<String, List<LiveStock>> entry : groupedByMonth.entrySet()) {
             String monthlyDateEntry = entry.getKey();
-            List<Stock> monthData = entry.getValue();
+            List<LiveStock> monthData = entry.getValue();
 
             // 월별 시가, 종가, 고가, 저가, 거래량 계산
             int monthlyStartPrice = monthData.get(0).getStartPrice();
             int monthlyEndPrice = monthData.get(monthData.size() - 1).getEndPrice();
-            int monthlyHighPrice = monthData.stream().mapToInt(Stock::getHighPrice).max().orElse(0);
-            int monthlyLowPrice = monthData.stream().mapToInt(Stock::getLowPrice).min().orElse(0);
-            long monthlyVolume = monthData.stream().mapToLong(Stock::getVolume).sum();
+            int monthlyHighPrice = monthData.stream().mapToInt(LiveStock::getHighPrice).max().orElse(0);
+            int monthlyLowPrice = monthData.stream().mapToInt(LiveStock::getLowPrice).min().orElse(0);
+            long monthlyVolume = monthData.stream().mapToLong(LiveStock::getVolume).sum();
 
             // 첫번째 일자 dd를 찾아서 날짜로 설정
             String formattedDate = monthData.get(0).getDate().toString();
@@ -195,7 +193,7 @@ public class StockService {
     // 연별 데이터를 연별로 변환
     private List<YearlyStockDTO> convertToYearly(String ticker, LocalDate startDate, LocalDate endDate) {
         // 티커에 해당하는 일별 데이터 조회
-        List<Stock> dailyData =   stockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
+        List<LiveStock> dailyData =   liveStockRepository.findByTickerAndDateRangeExclusive(ticker, startDate, endDate);
 
         // 만약 데이터가 없다면 빈 리스트를 반환
         if (dailyData.isEmpty()) {
@@ -203,22 +201,22 @@ public class StockService {
         }
 
         // 연별로 데이터를 그룹화하여 변환
-        Map<Integer, List<Stock>> groupedByYear = dailyData.stream()
-                .collect(Collectors.groupingBy(stock -> stock.getDate().getYear())); // 연도만 사용
+        Map<Integer, List<LiveStock>> groupedByYear = dailyData.stream()
+                .collect(Collectors.groupingBy(liveStock -> liveStock.getDate().getYear())); // 연도만 사용
 
         List<YearlyStockDTO> yearlyDataList = new ArrayList<>();
 
         // 연별로 데이터 처리 및 DTO 생성
-        for (Map.Entry<Integer, List<Stock>> entry : groupedByYear.entrySet()) {
+        for (Map.Entry<Integer, List<LiveStock>> entry : groupedByYear.entrySet()) {
             String yearDateEntry = entry.getKey().toString();
-            List<Stock> yearData = entry.getValue();
+            List<LiveStock> yearData = entry.getValue();
 
             // 연별 시가, 종가, 고가, 저가, 거래량 계산
             int yearlyStartPrice = yearData.get(0).getStartPrice();
             int yearlyEndPrice = yearData.get(yearData.size() - 1).getEndPrice();
-            int yearlyHighPrice = yearData.stream().mapToInt(Stock::getHighPrice).max().orElse(0);
-            int yearlyLowPrice = yearData.stream().mapToInt(Stock::getLowPrice).min().orElse(0);
-            long yearlyVolume = yearData.stream().mapToLong(Stock::getVolume).sum();
+            int yearlyHighPrice = yearData.stream().mapToInt(LiveStock::getHighPrice).max().orElse(0);
+            int yearlyLowPrice = yearData.stream().mapToInt(LiveStock::getLowPrice).min().orElse(0);
+            long yearlyVolume = yearData.stream().mapToLong(LiveStock::getVolume).sum();
 
             // 연도별 가장 작은 날짜 찾기 (연도별로 첫 번째 일자)
             String formattedDate = yearData.get(0).getDate().toString();  // 첫 번째 일자 (yyyy-mm-dd 형식)

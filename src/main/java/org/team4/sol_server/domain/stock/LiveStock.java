@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "stock")
+@Table(name = "livestock")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Stock {
+public class LiveStock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
