@@ -20,12 +20,6 @@ public class PortfolioEntity {
     @Column(name = "krw_balance")
     private Double krwBalance; // 보유 KRW (증권 계좌)
 
-    @Column(name = "stock_count")
-    private Integer stockCount; // 보유 주식 종류 수
-
-    @Column(name = "total_purchase_amount")
-    private Double totalPurchaseAmount; // 총 매수 금액
-
     @Column(name = "stock_name")
     private String stockName; // 보유 주식 이름
 
