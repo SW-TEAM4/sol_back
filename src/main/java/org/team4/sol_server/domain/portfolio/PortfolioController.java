@@ -13,19 +13,20 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api/portfolio")
 public class PortfolioController {
 
     @Autowired
     private PortfolioService portfolioService;
 
-    @GetMapping("/portfolio/list")
+    @GetMapping("/list")
     public ResponseEntity<List<PortfolioEntity>> getAllPortfolios(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         System.out.println("Authorization Header: " + authHeader); // 디버깅용
         List<PortfolioEntity> portfolioList = portfolioService.getAllPortfolios();
         return ResponseEntity.ok(portfolioList);
     }
+
     @GetMapping("/accountInformation")
     public ResponseEntity<UserBalanceDTO> getAccountInformation(@RequestParam("userIdx")Long UserIdx) {
         UserBalanceDTO  userBalanceDTO = portfolioService.getAccountInformation(UserIdx);
