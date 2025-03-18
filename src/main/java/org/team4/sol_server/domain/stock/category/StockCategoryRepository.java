@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StockRepository extends JpaRepository<StockEntity, Long> {
-    @Query("SELECT DISTINCT s FROM StockEntity s WHERE s.category = :category")
-    List<StockEntity> findByCategoryDistinct(@Param("category") String category);
+public interface StockCategoryRepository extends JpaRepository<StockCategoryEntity, Long> {
+    @Query("SELECT DISTINCT s FROM StockCategoryEntity s WHERE s.category = :category")
+    List<StockCategoryEntity> findByCategoryDistinct(@Param("category") String category);
 }

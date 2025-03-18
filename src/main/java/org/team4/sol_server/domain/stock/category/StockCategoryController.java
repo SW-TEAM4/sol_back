@@ -8,15 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/stocks")
-public class StockController {
+@RequestMapping("/api/stock")
+public class StockCategoryController {
 
     @Autowired
-    private StockService stockService;
+    private StockCategoryService stockCategoryService;
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<StockEntity>> getStocksByCategory(@PathVariable String category) {
-        List<StockEntity> stocks = stockService.getStocksByCategory(category);
+    public ResponseEntity<List<StockCategoryEntity>> getStocksByCategory(@PathVariable String category) {
+        List<StockCategoryEntity> stocks = stockCategoryService.getStocksByCategory(category);
         return ResponseEntity.ok(stocks);
     }
 }

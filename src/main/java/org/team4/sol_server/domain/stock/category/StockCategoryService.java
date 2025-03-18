@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class StockService {
+public class StockCategoryService {
 
     @Autowired
-    private StockRepository stockRepository;
+    private StockCategoryRepository stockCategoryRepository;
 
-    public List<StockEntity> getStocksByCategory(String category) {
+    public List<StockCategoryEntity> getStocksByCategory(String category) {
         // 중복 제거를 위해 Set으로 변환 후 다시 List로 변환
-        return stockRepository.findByCategoryDistinct(category)
+        return stockCategoryRepository.findByCategoryDistinct(category)
                 .stream()
                 .distinct()
                 .toList();
