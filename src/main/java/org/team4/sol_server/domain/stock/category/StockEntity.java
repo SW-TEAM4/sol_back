@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "stock_data") // 데이터베이스 테이블 이름과 매핑
+@Table(name = "category") // 데이터베이스 테이블 이름과 매핑
 @Data
 @Builder
 @NoArgsConstructor
