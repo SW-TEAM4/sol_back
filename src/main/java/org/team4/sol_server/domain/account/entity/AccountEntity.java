@@ -32,4 +32,7 @@ public class AccountEntity extends BaseEntity {
 
         @Column(name = "interest_ratio", nullable = false)
         private double interestRatio;  // 이자율
+
+        @Column(name = "account_type")
+        private String accountType;
 }
