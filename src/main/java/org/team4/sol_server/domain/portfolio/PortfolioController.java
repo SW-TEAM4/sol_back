@@ -28,9 +28,8 @@ public class PortfolioController {
     }
 
     @GetMapping("/accountInformation")
-    public ResponseEntity<UserBalanceDTO> getAccountInformation(@RequestParam("userIdx")Long userIdx) {
-        UserBalanceDTO  userBalanceDTO = portfolioService.getAccountInformation(userIdx);
-
+    public ResponseEntity<UserBalanceDTO> getAccountInformation(@RequestParam("userIdx")int userIdx) throws Exception {
+        UserBalanceDTO userBalanceDTO = portfolioService.getAccountInformation(userIdx);
 
         return ResponseEntity.ok(userBalanceDTO);
     }
