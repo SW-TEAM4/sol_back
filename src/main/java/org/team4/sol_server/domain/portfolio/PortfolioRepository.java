@@ -14,7 +14,7 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Stri
 
     @Query(value = "SELECT b.balance AS balance, " +
             "a.user_name AS userName, " +
-            "COALESCE(a.personal_investor, 'null') AS personalInvestor " +
+            "COALESCE(a.personal_investor, 100) AS personalInvestor " +
             "FROM users a, account b " +
             "WHERE a.user_idx = b.user_idx " +
             "AND b.account_type = 'b' " +

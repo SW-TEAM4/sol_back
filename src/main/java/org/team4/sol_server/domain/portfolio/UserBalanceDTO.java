@@ -13,6 +13,6 @@ public class UserBalanceDTO {
     private String userName;
 
     @JsonInclude(JsonInclude.Include.ALWAYS) // null 값도 포함
-    private String personalInvestor;
+    private int  personalInvestor;
 
 }
