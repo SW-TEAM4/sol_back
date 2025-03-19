@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class LiveLiveStockServiceTests {
+public class LiveLiveStockCategoryServiceTests {
     @Mock
     private LiveStockRepository liveStockRepository;  // Mock StockRepository
 

@@ -12,11 +12,8 @@ public class StockCategoryService {
     private StockCategoryRepository stockCategoryRepository;
 
     public List<StockCategoryEntity> getStocksByCategory(String category) {
-        // 중복 제거를 위해 Set으로 변환 후 다시 List로 변환
-        return stockCategoryRepository.findByCategoryDistinct(category)
-                .stream()
-                .distinct()
-                .toList();
+
+        return stockCategoryRepository.findByCategory(category);
     }
 }
 
