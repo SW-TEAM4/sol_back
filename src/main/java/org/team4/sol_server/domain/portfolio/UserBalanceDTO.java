@@ -3,6 +3,8 @@ package org.team4.sol_server.domain.portfolio;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.math.BigInteger;
+
 @Data
 @ToString
 @Builder
@@ -11,8 +13,6 @@ import lombok.*;
 public class UserBalanceDTO {
     private Long balance;
     private String userName;
-
-    @JsonInclude(JsonInclude.Include.ALWAYS) // null 값도 포함
-    private int  personalInvestor;
+    private int personalInvestor;
 
 }

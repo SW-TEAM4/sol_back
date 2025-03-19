@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.team4.sol_server.domain.account.entity.AccountEntity;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
+import org.team4.sol_server.domain.login.entity.User;
+import org.team4.sol_server.domain.login.repository.UserRepository;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -22,25 +22,32 @@ public class PortfolioService {
     @Autowired
     private PortfolioRepository portfolioRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private UserRepository userRepository;
+
     public List<PortfolioEntity> getAllPortfolios() {
         return portfolioRepository.findAll();
     }
     /* 계좌 잔액 + 투자자성향컬럼*/
-    public UserBalanceDTO  getAccountInformation(Long userIdx) {
+    public UserBalanceDTO  getAccountInformation(int userIdx) throws Exception {
 
         System.out.println("userIdx: " + userIdx);
 
-        List<Tuple> result = portfolioRepository.findUserBalanceNative(userIdx);
+        Optional<AccountEntity> account =  accountRepository.findAccountEntityByUserIdx(userIdx);
+        Optional<User> user = userRepository.findByUserIdx(userIdx);
 
-        Tuple tuple = result.get(0); // 첫 번째 결과를 가져옴
-        System.out.println("Tuple Data : " + tuple);
-        Long balance = (Long) tuple.get("balance");
-        int personalInvestor = (int) tuple.get("personalInvestor");
-        String userName = tuple.get("userName", String.class);
-
-        UserBalanceDTO userBalanceDTO = new UserBalanceDTO(balance, userName, personalInvestor);
-
-        return userBalanceDTO;
+        if (!account.isEmpty() && !user.isEmpty()) {
+            int personal = Optional.ofNullable(user.get().getPersonalInvestor()).orElse(100);
+            return UserBalanceDTO.builder()
+                    .balance(account.get().getBalance())
+                    .userName(user.get().getUsername())
+                    .personalInvestor(personal)
+                    .build();
+        } else {
+            throw new Exception("no user");
+        }
     }
 }
 

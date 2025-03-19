@@ -19,4 +19,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     /*계좌 추출*/
     @Query("SELECT a.accountNumber FROM AccountEntity a WHERE a.user.userIdx = :userIdx and a.accountType='a'")
     Optional<AccountEntity> findAccountNoByUserIdx(@Param("userIdx")int userIdx);
+
+    @Query("SELECT a FROM AccountEntity a WHERE a.user.userIdx = :userIdx and a.accountType='a'")
+    Optional<AccountEntity> findAccountEntityByUserIdx(@Param("userIdx")int userIdx);
 }
