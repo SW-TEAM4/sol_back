@@ -21,4 +21,6 @@ public interface LiveStockRepository extends JpaRepository<LiveStock, Long> {
     List<LiveStock> findByTickerAndDateRangeExclusive(
             @Param("ticker") String ticker, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate
     );
+
+    LiveStock findFirstByTickerOrderByDateDesc(String ticker);
 }

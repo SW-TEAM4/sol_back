@@ -23,12 +23,19 @@ public class LiveStock {
     @Column(name = "ticker")
     private String ticker;
 
+    @Column(name = "ticker_name")
+    private String tickerName;
+
     @Column(name = "date")
     private LocalDate date;
+
+    @Column(name = "diff_rate")
+    private double diffRate;
 
     private int startPrice;
     private int highPrice;
     private int lowPrice;
     private int endPrice;
     private Long volume;
+
 }
