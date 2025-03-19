@@ -3,10 +3,7 @@ package org.team4.sol_server.domain.stock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.team4.sol_server.domain.stock.dto.DailyStockDTO;
-import org.team4.sol_server.domain.stock.dto.MonthlyStockDTO;
-import org.team4.sol_server.domain.stock.dto.WeeklyStockDTO;
-import org.team4.sol_server.domain.stock.dto.YearlyStockDTO;
+import org.team4.sol_server.domain.stock.dto.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +23,29 @@ public class LiveStockService {
     *   monthly이면 end_date에서 5년 전까지 데이터를 가져오기
     *   yearly이면 end_date에서 10년 전까지 데이터를 가져오기
     */
+    // 초기화를 위한 가장 최신의 데이터를 티커별로 반환
+    public List<DefaultStockDTO> getInitStockData(List<String> tickers) {
+        List<DefaultStockDTO> defaultData = new ArrayList<>();
+
+        for (String ticker : tickers) {
+            LiveStock liveStock = liveStockRepository.findFirstByTickerOrderByDateDesc(ticker);
+            if (liveStock != null) {
+                defaultData.add(DefaultStockDTO.builder()
+                            .ticker(liveStock.getTicker())
+                            .tickerName(liveStock.getTickerName())
+                            .startPrice(liveStock.getStartPrice())
+                            .endPrice(liveStock.getEndPrice())
+                            .highPrice(liveStock.getHighPrice())
+                            .lowPrice(liveStock.getLowPrice())
+                            .diffRate(liveStock.getDiffRate())
+                            .diff((int) (liveStock.getStartPrice() * liveStock.getDiffRate() / 100))
+                            .volume(liveStock.getVolume())
+                    .build());
+            }
+        }
+
+        return defaultData;
+    }
 
     public List<DailyStockDTO> getDailyStockData(String ticker, int page) {
         LocalDate today = LocalDate.now();
@@ -79,7 +99,6 @@ public class LiveStockService {
 
         return convertToYearly(ticker, startDate, endDate);
     }
-
 
     // 일별 데이터를 주별로 변환
     private List<WeeklyStockDTO> convertToWeekly(String ticker, LocalDate startDate, LocalDate endDate) {
