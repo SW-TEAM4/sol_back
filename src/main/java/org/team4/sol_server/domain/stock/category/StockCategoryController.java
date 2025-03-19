@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/stock")
+@CrossOrigin(origins = "http://localhost:3000") // React 앱만 허용
 public class StockCategoryController {
 
     @Autowired

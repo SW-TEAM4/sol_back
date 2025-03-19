@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface StockCategoryRepository extends JpaRepository<StockCategoryEntity, Long> {
-    @Query("SELECT DISTINCT s FROM StockCategoryEntity s WHERE s.category = :category")
-    List<StockCategoryEntity> findByCategoryDistinct(@Param("category") String category);
+    @Query("SELECT s FROM StockCategoryEntity s WHERE s.category = :category")
+    List<StockCategoryEntity> findByCategory(@Param("category") String category);
 }
