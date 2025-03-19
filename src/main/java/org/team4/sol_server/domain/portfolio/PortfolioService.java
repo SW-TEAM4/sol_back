@@ -35,7 +35,7 @@ public class PortfolioService {
         Tuple tuple = result.get(0); // 첫 번째 결과를 가져옴
         System.out.println("Tuple Data : " + tuple);
         Long balance = (Long) tuple.get("balance");
-        String personalInvestor = tuple.get("personalInvestor", String.class);
+        int personalInvestor = (int) tuple.get("personalInvestor");
         String userName = tuple.get("userName", String.class);
 
         UserBalanceDTO userBalanceDTO = new UserBalanceDTO(balance, userName, personalInvestor);
