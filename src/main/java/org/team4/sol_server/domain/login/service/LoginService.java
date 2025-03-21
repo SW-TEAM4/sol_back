@@ -55,9 +55,9 @@ public class LoginService {
                 "username", user.getUsername(),
                 "email", user.getEmail(),
                 "gender", user.getGender(),
-                "job" , user.getJob(),
+                "job", user.getJob(),
                 "age", user.getAge(),
-                "investor", user.getPersonalInvestor()
+                "investor", user.getPersonalInvestor() != null ? user.getPersonalInvestor() : -1
         );
     }
 
