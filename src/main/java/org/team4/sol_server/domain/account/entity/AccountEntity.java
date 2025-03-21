@@ -22,7 +22,7 @@ public class AccountEntity extends BaseEntity {
         private User user;
 
         @Column(name = "balance", nullable = false)
-        private Long balance = 0L;
+        private Long balance;
 
         @Column(name = "investor_ratio", nullable = false)
         private int investorRatio;  // 이체 비율
