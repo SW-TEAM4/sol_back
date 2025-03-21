@@ -72,7 +72,8 @@ public class AuthController {
                 userIdx,
                 (String) updates.get("gender"),
                 (Integer) updates.get("age"),
-                (Integer) updates.get("job")
+                (Integer) updates.get("job"),
+                (Integer) updates.get("investor")
         );
 
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.UPDATED_SUCCESS));

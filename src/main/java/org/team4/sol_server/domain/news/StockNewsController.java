@@ -21,14 +21,18 @@ public class StockNewsController {
      * @return 최신 뉴스 리스트
      */
     @GetMapping("/headlines")
-    public ResponseEntity<List<StockNewsEntity>> getHeadlines(
+    public ResponseEntity<?> getHeadlines(
             @RequestParam(defaultValue = "7") int limit
     ) {
         List<StockNewsEntity> headlines = stocknewsService.getHeadlines(limit);
         if (headlines.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            // 뉴스가 없을 때 메시지를 포함한 응답 반환
+            Map<String, String> response = Map.of("message", "뉴스가 없습니다");
+            return ResponseEntity.ok(response);
         }
         System.out.println("헤드라인 데이터: " + headlines); // 디버깅 로그 추가
         return ResponseEntity.ok(headlines);
     }
+
+
 }
