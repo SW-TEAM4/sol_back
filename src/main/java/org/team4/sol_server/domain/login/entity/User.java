@@ -84,7 +84,7 @@ public class User {
     /**
      * 모든 필드를 업데이트 (조건 없이)
      */
-    public boolean updateUser(String gender, Integer age, Integer job) {
+    public boolean updateUser(String gender, Integer age, Integer job, Integer investor) {
         boolean isUpdated = false;
 
         // gender, age, job을 모두 조건 없이 업데이트
@@ -100,6 +100,11 @@ public class User {
 
         if (job != null) {
             this.job = job; // job 업데이트
+            isUpdated = true;
+        }
+
+        if (investor != null) {
+            this.personalInvestor = investor;
             isUpdated = true;
         }
 

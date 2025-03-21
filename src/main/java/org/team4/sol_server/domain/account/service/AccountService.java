@@ -10,6 +10,8 @@ import org.team4.sol_server.domain.account.entity.AccountHistoryEntity;
 import org.team4.sol_server.domain.account.repository.AccountHistoryRepository;
 import org.team4.sol_server.domain.account.repository.AccountRepository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 /*
 파일명 : AccountService.java
@@ -221,5 +223,29 @@ public class AccountService {
 
     public Optional<AccountEntity> getAccountNo(int userIdx) {
         return accountRepository.findAccountNoByUserIdx(userIdx);
+    }
+
+    /**
+     * 특정 사용자의 파킹통장 잔액과 태그 반환
+     */
+    public Map<String, Object> getParkingAccountTags(int userIdx) {
+        // 파킹통장 잔액 조회
+        Optional<Long> balanceOptional = accountRepository.findParkingBalanceByUserIdx(userIdx);
+        Long balance = balanceOptional.orElse(0L);
+
+        // 금액에 따른 태그 설정
+        List<String> tags;
+        if (balance < 10000000) { // 1천만원 미만
+            tags = List.of("#1천만원이내", "#10~20% 투자", "#소확행");
+        } else if (balance < 50000000) { // 5천만원 미만
+            tags = List.of("#1천~5천만원", "#20~30% 투자", "#월배당");
+        } else { // 5천만원 이상
+            tags = List.of("#1억원이상", "#10%이내", "#대주주");
+        }
+
+        return Map.of(
+                "balance", balance,
+                "tags", tags
+        );
     }
 }

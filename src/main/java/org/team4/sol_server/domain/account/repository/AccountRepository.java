@@ -22,4 +22,8 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     @Query("SELECT a FROM AccountEntity a WHERE a.user.userIdx = :userIdx and a.accountType='a'")
     Optional<AccountEntity> findAccountEntityByUserIdx(@Param("userIdx")int userIdx);
+
+    // 특정 사용자의 파킹통장 잔액 조회
+    @Query("SELECT a.balance FROM AccountEntity a WHERE a.user.userIdx = :userIdx AND a.accountType = 'a'")
+    Optional<Long> findParkingBalanceByUserIdx(@Param("userIdx") int userIdx);
 }

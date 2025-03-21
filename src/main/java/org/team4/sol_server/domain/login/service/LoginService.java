@@ -56,7 +56,8 @@ public class LoginService {
                 "email", user.getEmail(),
                 "gender", user.getGender(),
                 "job" , user.getJob(),
-                "age", user.getAge()
+                "age", user.getAge(),
+                "investor", user.getPersonalInvestor()
         );
     }
 
@@ -100,11 +101,11 @@ public class LoginService {
     }
 
     @Transactional
-    public BaseResponseStatus updateUserInfo(int userIdx, String gender, Integer age, Integer job) throws BaseException {
+    public BaseResponseStatus updateUserInfo(int userIdx, String gender, Integer age, Integer job, Integer investor) throws BaseException {
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
-        boolean isUpdated = user.updateUser(gender, age, job);
+        boolean isUpdated = user.updateUser(gender, age, job, investor);
         if (isUpdated) {
             userRepository.save(user);
             return BaseResponseStatus.SUCCESS;

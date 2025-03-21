@@ -159,4 +159,13 @@ public class AccountController {
     public Optional<AccountEntity> getAccountNo(@RequestParam int userIdx) {
         return accountService.getAccountNo(userIdx);
     }
+
+    /**
+     * 사용자 파킹통장 태그 조회 API
+     */
+    @GetMapping("/parking-tags")
+    public ResponseEntity<Map<String, Object>> getParkingTags(@RequestParam int userIdx) {
+        Map<String, Object> result = accountService.getParkingAccountTags(userIdx);
+        return ResponseEntity.ok(result);
+    }
 }
